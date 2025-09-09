@@ -1,0 +1,32 @@
+{
+  "name": "projetointegradoravancado",
+  "version": "1.0.0",
+  "description": "Projeto integrador para o curso do capacita brasil módulo avançado. Esse projeto é o backend de um ecommerce de sapatos",
+  "keywords": [
+    "backend",
+    "sapataria",
+    "ecommerce"
+  ],
+  "homepage": "https://github.com/bcastroea/sapatariacapacita-backend#readme",
+  "bugs": {
+    "url": "https://github.com/bcastroea/sapatariacapacita-backend/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bcastroea/sapatariacapacita-backend.git"
+  },
+  "license": "ISC",
+  "author": "Isac Dias Gama, Beatriz Castro Silva, Adson, Bruno Erick, Cleudiano Junior, Ramiro Dantas",
+  "type": "commonjs",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.15.0",
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "prisma": "^6.15.0"
+  }
+}
