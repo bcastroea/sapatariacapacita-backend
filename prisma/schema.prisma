@@ -12,3 +12,106 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+enum StatusCompra {
+  PENDING
+  PAID
+  SENT
+  DELIVERED
+  CANCELED
+}
+
+model Produto {
+  id           Int          @id @default(autoincrement())
+  nome         String
+  tipo         String?
+  cor          String?
+  stars        Float?
+  qtdEstoque   Int
+  qtdVendido   Int
+  qtdAvaliacao Int
+  descricao    String?
+  precos       Preco[]
+  imagens      Imagem[]
+  tamanhos     Tamanho[]
+  compras      ItemCompra[]
+}
+
+model Preco {
+  id            Int            @id @default(autoincrement())
+  semDesconto   Float
+  aVista        Float
+  produto       Produto        @relation(fields: [produtoId], references: [id])
+  produtoId     Int
+  parcelamentos Parcelamento[]
+}
+
+model Parcelamento {
+  id       Int   @id @default(autoincrement())
+  parcelas Int
+  valor    Float
+  preco    Preco @relation(fields: [precoId], references: [id])
+  precoId  Int
+}
+
+model Imagem {
+  id        Int     @id @default(autoincrement())
+  url       String
+  produto   Produto @relation(fields: [produtoId], references: [id])
+  produtoId Int
+}
+
+model Tamanho {
+  id        Int     @id @default(autoincrement())
+  numero    Int
+  produto   Produto @relation(fields: [produtoId], references: [id])
+  produtoId Int
+}
+
+model Cliente {
+  id        Int        @id @default(autoincrement())
+  nome      String
+  email     String     @unique
+  senha     String
+  enderecos Endereco[]
+  compras   Compra[]
+  criadoEm  DateTime   @default(now())
+}
+
+model Usuario {
+  id       Int      @id @default(autoincrement())
+  nome     String
+  email    String   @unique
+  senha    String
+  criadoEm DateTime @default(now())
+}
+
+model Endereco {
+  id        Int     @id @default(autoincrement())
+  rua       String
+  numero    String
+  cidade    String
+  estado    String
+  cep       String
+  cliente   Cliente @relation(fields: [clienteId], references: [id])
+  clienteId Int
+}
+
+model Compra {
+  id        Int          @id @default(autoincrement())
+  cliente   Cliente      @relation(fields: [clienteId], references: [id])
+  clienteId Int
+  itens     ItemCompra[]
+  status    StatusCompra @default(PENDING)
+  criadoEm  DateTime     @default(now())
+}
+
+model ItemCompra {
+  id         Int     @id @default(autoincrement())
+  compra     Compra  @relation(fields: [compraId], references: [id])
+  compraId   Int
+  produto    Produto @relation(fields: [produtoId], references: [id])
+  produtoId  Int
+  quantidade Int
+  precoUnit  Float
+}
