@@ -1,11 +1,11 @@
-const express = require('express');
-const app = express();
-const port = 3000;
+import express from 'express';
 
-// Middleware to parse JSON bodies
+const app = express();
+const PORT = process.env.PORT || 3000;
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
 });
