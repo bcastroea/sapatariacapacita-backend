@@ -87,16 +87,16 @@ export const comprasController = {
           .status(403)
           .json({ error: "You can only cancel your own compras" });
       }
-      if (compra.status === "CANCELLED") {
-        return res.status(400).json({ error: "Compra is already cancelled" });
+      if (compra.status === "canceled") {
+        return res.status(400).json({ error: "Compra is already canceled" });
       }
 
-      const cancelledCompra = await prisma.compra.update({
+      const canceledCompra = await prisma.compra.update({
         where: { id: parseInt(id) },
-        data: { status: "CANCELLED" },
+        data: { status: "canceled" },
       });
 
-      return res.json(cancelledCompra);
+      return res.json(canceledCompra);
     } catch (error) {
       console.error(error);
       return res.status(500).json({ error: "Failed to cancel compra" });
@@ -119,7 +119,7 @@ export const comprasController = {
         "PAID",
         "SENT",
         "DELIVERED",
-        "CANCELLED",
+        "canceled",
       ];
       if (!validStatuses.includes(status)) {
         return res.status(400).json({ error: "Invalid status value" });
