@@ -56,7 +56,7 @@ model Parcelamento {
 
 model Imagem {
   id        Int     @id @default(autoincrement())
-  url       String
+  data      Bytes
   produto   Produto @relation(fields: [produtoId], references: [id])
   produtoId Int
 }
