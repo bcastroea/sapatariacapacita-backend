@@ -22,7 +22,8 @@ export const produtosController = {
   async getProdutoById(req, res) {
     try {
       const id = parseInt(req.params.id);
-      if (isNaN(id)) return res.status(400).json({ error: "Invalid produto ID" });
+      if (isNaN(id))
+        return res.status(400).json({ error: "Invalid produto ID" });
 
       const produto = await prisma.produto.findUnique({
         where: { id },
@@ -45,12 +46,24 @@ export const produtosController = {
   async createProduto(req, res) {
     try {
       if (!req.auth || req.auth.role !== "USER") {
-        return res.status(403).json({ error: "Only users can create produtos" });
+        return res
+          .status(403)
+          .json({ error: "Only users can create produtos" });
       }
 
-      const { nome, tipo, cor, stars, qtdEstoque, descricao, precos, tamanhos } = req.body;
+      const {
+        nome,
+        tipo,
+        cor,
+        stars,
+        qtdEstoque,
+        descricao,
+        precos,
+        tamanhos,
+      } = req.body;
 
-      const imagensData = req.files?.map((file) => ({ data: file.buffer })) || [];
+      const imagensData =
+        req.files?.map((file) => ({ data: file.buffer })) || [];
 
       const newProduto = await prisma.produto.create({
         data: {
@@ -61,13 +74,18 @@ export const produtosController = {
           qtdEstoque,
           descricao,
           precos: {
-            create: precos?.map((preco) => ({
-              semDesconto: preco.semDesconto,
-              aVista: preco.aVista,
-              parcelamentos: {
-                create: preco.parcelamentos?.map((p) => ({ parcelas: p.parcelas, valor: p.valor })) || [],
-              },
-            })) || [],
+            create:
+              precos?.map((preco) => ({
+                semDesconto: preco.semDesconto,
+                aVista: preco.aVista,
+                parcelamentos: {
+                  create:
+                    preco.parcelamentos?.map((p) => ({
+                      parcelas: p.parcelas,
+                      valor: p.valor,
+                    })) || [],
+                },
+              })) || [],
           },
           imagens: { create: imagensData },
           tamanhos: { create: tamanhos || [] },
@@ -89,11 +107,14 @@ export const produtosController = {
   async updateProduto(req, res) {
     try {
       if (!req.auth || req.auth.role !== "USER") {
-        return res.status(403).json({ error: "Only users can update produtos" });
+        return res
+          .status(403)
+          .json({ error: "Only users can update produtos" });
       }
 
       const id = parseInt(req.params.id);
-      if (isNaN(id)) return res.status(400).json({ error: "Invalid produto ID" });
+      if (isNaN(id))
+        return res.status(400).json({ error: "Invalid produto ID" });
 
       const { nome, tipo, cor, stars, qtdEstoque, descricao } = req.body;
       const updatedData = {};
@@ -129,11 +150,14 @@ export const produtosController = {
   async deleteProduto(req, res) {
     try {
       if (!req.auth || req.auth.role !== "USER") {
-        return res.status(403).json({ error: "Only users can delete produtos" });
+        return res
+          .status(403)
+          .json({ error: "Only users can delete produtos" });
       }
 
       const id = parseInt(req.params.id);
-      if (isNaN(id)) return res.status(400).json({ error: "Invalid produto ID" });
+      if (isNaN(id))
+        return res.status(400).json({ error: "Invalid produto ID" });
 
       await prisma.produto.delete({ where: { id } });
       return res.status(204).send();
@@ -143,4 +167,3 @@ export const produtosController = {
     }
   },
 };
-
