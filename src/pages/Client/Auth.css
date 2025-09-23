@@ -1,0 +1,126 @@
+.auth-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f5f5f5;
+}
+
+.auth-form {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  margin-top: 25px;
+  margin-bottom: 25px;
+}
+
+.auth-form h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #555;
+  font-weight: 500;
+}
+
+/* CORREÇÃO AQUI - Garantir consistência nos inputs */
+.form-group input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+  box-sizing: border-box; /* Importante: inclui padding e border no width */
+  font-family: inherit; /* Garante a mesma fonte */
+  line-height: normal; /* Remove line-height padrão diferente */
+}
+
+/* Especificamente para inputs de password */
+.form-group input[type="password"] {
+  /* Forçar a mesma aparência que inputs normais */
+  font-family: inherit; /* Mesma fonte que outros inputs */
+  letter-spacing: normal; /* Remove espaçamento especial de password */
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.auth-error {
+  background-color: #fee;
+  color: #c33;
+  padding: 0.75rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  border: 1px solid #fcc;
+}
+
+.auth-link {
+  text-align: center;
+  margin-top: 1.5rem;
+  color: #666;
+}
+
+.auth-link a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.auth-link a:hover {
+  text-decoration: underline;
+}
+
+button[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Reset adicional para garantir consistência entre navegadores */
+input {
+  margin: 0;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+/* Para navegadores Webkit (Chrome, Safari) */
+input[type="password"]::-webkit-textfield-decoration-container {
+  padding: 0;
+}
+
+input[type="password"]::-webkit-credentials-auto-fill-button {
+  margin-right: 4px;
+}
+
+.auth-success {
+  background-color: #edf7ed;
+  color: #2e7d32;
+  padding: 0.75rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  border: 1px solid #4caf50;
+  text-align: center;
+}
+
+.auth-info {
+  background-color: #e3f2fd;
+  color: #1565c0;
+  padding: 0.75rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  border: 1px solid #2196f3;
+  text-align: center;
+}
