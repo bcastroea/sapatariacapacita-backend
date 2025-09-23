@@ -83,6 +83,7 @@ model Usuario {
   nome     String
   email    String   @unique
   senha    String
+  role     String   @default("USER")
   criadoEm DateTime @default(now())
 }
 
@@ -97,13 +98,24 @@ model Endereco {
   clienteId Int
 }
 
+enum PaymentMethod {
+  CREDIT
+  PAYPAL
+}
+
 model Compra {
-  id        Int          @id @default(autoincrement())
-  cliente   Cliente      @relation(fields: [clienteId], references: [id])
-  clienteId Int
-  itens     ItemCompra[]
-  status    StatusCompra @default(PENDING)
-  criadoEm  DateTime     @default(now())
+  id         Int           @id @default(autoincrement())
+  cliente    Cliente       @relation(fields: [clienteId], references: [id])
+  clienteId  Int
+  itens      ItemCompra[]
+  status     StatusCompra  @default(PENDING)
+  payment    PaymentMethod
+  criadoEm   DateTime      @default(now())
+  rua        String
+  numero     String
+  cidade     String
+  estado     String
+  cep        String
 }
 
 model ItemCompra {

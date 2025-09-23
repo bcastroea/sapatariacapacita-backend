@@ -11,7 +11,17 @@ export const comprasController = {
 
       const compras = await prisma.compra.findMany({
         where: { clienteId: clientId },
-        include: { itens: true },
+        include: {
+          itens: {
+            include: {
+              produto: {
+                include: {
+                  imagens: true
+                }
+              },
+            },
+          },
+        },
       });
 
       return res.json(compras);
@@ -27,12 +37,28 @@ export const comprasController = {
         return res.status(401).json({ error: "Unauthorized" });
       }
       const clientId = req.auth.clientId;
-      const { itens } = req.body;
+      const { itens, payment, endereco } = req.body; // <- pega o endereco do frontend
+
+      const itensData = itens.map((item) => ({
+        produtoId: item.produtoId,
+        quantidade: item.quantidade,
+        precoUnit: item.precoUnit,
+      }));
 
       const newCompra = await prisma.compra.create({
-        data: { clienteId: clientId, itens: { create: itens } },
+        data: {
+          clienteId: clientId,
+          itens: { create: itensData },
+          payment,
+          rua: endereco.rua,
+          numero: endereco.numero,
+          cidade: endereco.cidade,
+          estado: endereco.estado,
+          cep: endereco.cep,
+        },
         include: { itens: true },
       });
+
       return res.status(201).json(newCompra);
     } catch (error) {
       console.error(error);
@@ -87,13 +113,13 @@ export const comprasController = {
           .status(403)
           .json({ error: "You can only cancel your own compras" });
       }
-      if (compra.status === "canceled") {
+      if (compra.status === "CANCELED") {
         return res.status(400).json({ error: "Compra is already canceled" });
       }
 
       const canceledCompra = await prisma.compra.update({
         where: { id: parseInt(id) },
-        data: { status: "canceled" },
+        data: { status: "CANCELED" },
       });
 
       return res.json(canceledCompra);

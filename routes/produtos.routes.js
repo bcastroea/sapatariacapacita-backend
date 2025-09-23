@@ -235,4 +235,30 @@ router.delete(
   produtosController.deleteProduto,
 );
 
+/**
+ * @swagger
+ * /produtos/imagem/{id}:
+ *   get:
+ *     summary: Obter imagem do produto
+ *     tags: [Produtos]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID da imagem
+ *     responses:
+ *       200:
+ *         description: Imagem do produto
+ *         content:
+ *           image/*:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *       404:
+ *         description: Imagem não encontrada
+ */
+router.get("/imagem/:id", produtosController.getImagem);
+
 export default router;

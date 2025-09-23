@@ -11,13 +11,16 @@ export const clientController = {
       if (req.auth.role === "CLIENT") {
         const client = await prisma.cliente.findUnique({
           where: { id: req.auth.clientId },
+          include: { enderecos: true }
         });
         return client
           ? res.json(client)
           : res.status(404).json({ error: "Client not found" });
       }
 
-      const clients = await prisma.cliente.findMany();
+      const clients = await prisma.cliente.findMany({
+        include: { enderecos: true }
+      });
       return res.json(clients);
     } catch (error) {
       console.error(error);

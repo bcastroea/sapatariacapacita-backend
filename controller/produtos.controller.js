@@ -7,7 +7,7 @@ export const produtosController = {
       const produtos = await prisma.produto.findMany({
         include: {
           precos: { include: { parcelamentos: true } },
-          imagens: true,
+          imagens: { select: { id: true } },
           tamanhos: true,
           compras: { include: { produto: true } },
         },
@@ -137,6 +137,7 @@ export const produtosController = {
           precos: { include: { parcelamentos: true } },
           imagens: true,
           tamanhos: true,
+          
         },
       });
 
@@ -164,6 +165,33 @@ export const produtosController = {
     } catch (error) {
       console.error(error);
       return res.status(500).json({ error: "Failed to delete produto" });
+    }
+  },
+
+  async getImagem(req, res) {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ error: "Invalid image ID" });
+      }
+
+      const imagem = await prisma.imagem.findUnique({
+        where: { id },
+        select: { data: true }
+      });
+
+      if (!imagem) {
+        return res.status(404).json({ error: "Image not found" });
+      }
+
+      // Configurar headers para imagem
+      res.setHeader("Content-Type", "image/jpeg");
+      res.setHeader("Cache-Control", "public, max-age=31536000"); // Cache de 1 ano
+
+      return res.send(imagem.data);
+    } catch (error) {
+      console.error("Error retrieving image:", error);
+      return res.status(500).json({ error: "Failed to retrieve image" });
     }
   },
 };

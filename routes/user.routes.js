@@ -88,8 +88,6 @@ const router = express.Router();
  */
 router.post(
   "/login",
-  authMiddleware,
-  authorize(["USER"]),
   userController.login,
 );
 
