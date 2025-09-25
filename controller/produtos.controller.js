@@ -11,6 +11,7 @@ export const produtosController = {
           tamanhos: true,
           compras: { include: { produto: true } },
         },
+        orderBy: { id: "asc" },
       });
       return res.json(produtos);
     } catch (error) {
@@ -51,44 +52,47 @@ export const produtosController = {
           .json({ error: "Only users can create produtos" });
       }
 
-      const {
-        nome,
-        tipo,
-        cor,
-        stars,
-        qtdEstoque,
-        descricao,
-        precos,
-        tamanhos,
-      } = req.body;
+      const { nome, tipo, cor, stars, qtdEstoque, descricao, preco } = req.body;
 
       const imagensData =
         req.files?.map((file) => ({ data: file.buffer })) || [];
+
+      const tamanhos = [];
+      for (const key in req.body) {
+        const match = key.match(/^tamanhos\[(\d+)\]\[numero\]$/);
+        if (match) {
+          tamanhos.push({ numero: parseInt(req.body[key]) });
+        }
+      }
+
+      const precoCheio = parseFloat(preco);
+      const precoPix = +(precoCheio * 0.95).toFixed(2);
+
+      const parcelamentos = [
+        { parcelas: 3, valor: +(precoCheio / 3).toFixed(2) },
+        { parcelas: 6, valor: +(precoCheio / 6).toFixed(2) },
+        { parcelas: 12, valor: +(precoCheio / 12).toFixed(2) },
+      ];
 
       const newProduto = await prisma.produto.create({
         data: {
           nome,
           tipo,
           cor,
-          stars,
-          qtdEstoque,
+          stars: stars ? parseFloat(stars) : 0,
+          qtdEstoque: qtdEstoque ? parseInt(qtdEstoque) : 0,
           descricao,
-          precos: {
-            create:
-              precos?.map((preco) => ({
-                semDesconto: preco.semDesconto,
-                aVista: preco.aVista,
-                parcelamentos: {
-                  create:
-                    preco.parcelamentos?.map((p) => ({
-                      parcelas: p.parcelas,
-                      valor: p.valor,
-                    })) || [],
-                },
-              })) || [],
-          },
           imagens: { create: imagensData },
-          tamanhos: { create: tamanhos || [] },
+          tamanhos: { create: tamanhos },
+          precos: {
+            create: {
+              semDesconto: precoCheio,
+              aVista: precoPix,
+              parcelamentos: {
+                create: parcelamentos,
+              },
+            },
+          },
         },
         include: {
           precos: { include: { parcelamentos: true } },
@@ -116,15 +120,29 @@ export const produtosController = {
       if (isNaN(id))
         return res.status(400).json({ error: "Invalid produto ID" });
 
-      const { nome, tipo, cor, stars, qtdEstoque, descricao } = req.body;
+      const { nome, tipo, cor, stars, qtdEstoque, descricao, removeImagens } =
+        req.body;
+
       const updatedData = {};
       if (nome) updatedData.nome = nome;
       if (tipo) updatedData.tipo = tipo;
       if (cor) updatedData.cor = cor;
-      if (stars != null) updatedData.stars = stars;
-      if (qtdEstoque != null) updatedData.qtdEstoque = qtdEstoque;
+      if (stars != null) updatedData.stars = parseFloat(stars);
+      if (qtdEstoque != null) updatedData.qtdEstoque = parseInt(qtdEstoque);
       if (descricao) updatedData.descricao = descricao;
 
+      // 🔑 Remover imagens antigas (se IDs forem enviados pelo front)
+      if (removeImagens) {
+        const ids = Array.isArray(removeImagens)
+          ? removeImagens.map((i) => parseInt(i))
+          : [parseInt(removeImagens)];
+
+        await prisma.imagem.deleteMany({
+          where: { id: { in: ids }, produtoId: id },
+        });
+      }
+
+      // 🔑 Adicionar novas imagens
       const imagensData = req.files?.map((file) => ({ data: file.buffer }));
       if (imagensData?.length) {
         updatedData.imagens = { create: imagensData };
@@ -137,7 +155,6 @@ export const produtosController = {
           precos: { include: { parcelamentos: true } },
           imagens: true,
           tamanhos: true,
-          
         },
       });
 
@@ -177,7 +194,7 @@ export const produtosController = {
 
       const imagem = await prisma.imagem.findUnique({
         where: { id },
-        select: { data: true }
+        select: { data: true },
       });
 
       if (!imagem) {

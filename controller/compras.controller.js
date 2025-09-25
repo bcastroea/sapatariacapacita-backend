@@ -4,25 +4,36 @@ const prisma = new PrismaClient();
 export const comprasController = {
   async getCompras(req, res) {
     try {
-      if (!req.auth || !req.auth.clientId) {
+      if (!req.auth) {
         return res.status(401).json({ error: "Unauthorized" });
       }
-      const clientId = req.auth.clientId;
 
-      const compras = await prisma.compra.findMany({
-        where: { clienteId: clientId },
-        include: {
-          itens: {
-            include: {
-              produto: {
-                include: {
-                  imagens: true
-                }
+      let compras;
+
+      if (req.auth.role === "USER") {
+        compras = await prisma.compra.findMany({
+          include: {
+            itens: {
+              include: {
+                produto: { include: { imagens: true } },
               },
             },
           },
-        },
-      });
+        });
+      } else if (req.auth.clientId) {
+        compras = await prisma.compra.findMany({
+          where: { clienteId: req.auth.clientId },
+          include: {
+            itens: {
+              include: {
+                produto: { include: { imagens: true } },
+              },
+            },
+          },
+        });
+      } else {
+        return res.status(403).json({ error: "Not allowed to list compras" });
+      }
 
       return res.json(compras);
     } catch (error) {
@@ -145,7 +156,7 @@ export const comprasController = {
         "PAID",
         "SENT",
         "DELIVERED",
-        "canceled",
+        "CANCELED",
       ];
       if (!validStatuses.includes(status)) {
         return res.status(400).json({ error: "Invalid status value" });
@@ -161,6 +172,9 @@ export const comprasController = {
       const updatedCompra = await prisma.compra.update({
         where: { id: parseInt(id) },
         data: { status },
+        include: {
+          itens: { include: { produto: { include: { imagens: true } } } },
+        },
       });
 
       return res.json(updatedCompra);

@@ -86,10 +86,7 @@ const router = express.Router();
  *       401:
  *         description: Email ou senha inválidos
  */
-router.post(
-  "/login",
-  userController.login,
-);
+router.post("/login", userController.login);
 
 /**
  * @swagger

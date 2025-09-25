@@ -26,10 +26,10 @@ model Produto {
   nome         String
   tipo         String?
   cor          String?
-  stars        Float?
-  qtdEstoque   Int
-  qtdVendido   Int
-  qtdAvaliacao Int
+  stars        Float?       @default(0)
+  qtdEstoque   Int          @default(0)
+  qtdVendido   Int          @default(0)
+  qtdAvaliacao Int          @default(0)
   descricao    String?
   precos       Preco[]
   imagens      Imagem[]

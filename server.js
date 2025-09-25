@@ -12,7 +12,7 @@ import dotenv from "dotenv";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 
-import cors from "cors"
+import cors from "cors";
 
 dotenv.config();
 
@@ -24,12 +24,11 @@ const prisma = new PrismaClient();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use(cors({
-  origin: [ 
-    'http://localhost:3001', 
-    'http://localhost:3000' 
-  ]
-}));
+app.use(
+  cors({
+    origin: ["http://localhost:3001", "http://localhost:3000"],
+  }),
+);
 
 // Rotas da aplicação
 app.use("/clients", clientRoutes);
@@ -97,10 +96,10 @@ async function startServer() {
 
     app.listen(PORT, () => {
       console.log(
-        `Server rodando em: ${process.env.BASE_URL || `http://localhost:${PORT}`}`
+        `Server rodando em: ${process.env.BASE_URL || `http://localhost:${PORT}`}`,
       );
       console.log(
-        `Swagger UI: ${process.env.BASE_URL || `http://localhost:${PORT}`}/api-docs`
+        `Swagger UI: ${process.env.BASE_URL || `http://localhost:${PORT}`}/api-docs`,
       );
     });
   } catch (err) {

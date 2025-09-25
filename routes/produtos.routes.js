@@ -1,6 +1,7 @@
 import { produtosController } from "../controller/produtos.controller.js";
 import { authMiddleware } from "../middleware/auth.middleware.js";
 import { authorize } from "../middleware/authorize.middleware.js";
+import { upload } from "../middleware/upload.js";
 import express from "express";
 
 const router = express.Router();
@@ -167,7 +168,8 @@ router.get("/:id", produtosController.getProdutoById);
 router.post(
   "/",
   authMiddleware,
-  authorize(["USER"]),
+  authorize("USER"),
+  upload.array("imagens"),
   produtosController.createProduto,
 );
 
@@ -205,6 +207,7 @@ router.put(
   "/:id",
   authMiddleware,
   authorize(["USER"]),
+  upload.array("imagens"),
   produtosController.updateProduto,
 );
 

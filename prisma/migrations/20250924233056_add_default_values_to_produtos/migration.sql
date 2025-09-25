@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "public"."Produto" ALTER COLUMN "stars" SET DEFAULT 0,
+ALTER COLUMN "qtdEstoque" SET DEFAULT 0,
+ALTER COLUMN "qtdVendido" SET DEFAULT 0,
+ALTER COLUMN "qtdAvaliacao" SET DEFAULT 0;
